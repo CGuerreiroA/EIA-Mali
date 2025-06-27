@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mali Waste Management EIA Dashboard - Tominian & San Districts</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
+        .container { background: rgba(255,255,255,0.95); margin: 20px auto; border-radius: 15px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #2c3e50, #3498db); color: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; }
+        .card { border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .card-header { font-weight: bold; border-bottom: none; border-radius: 10px 10px 0 0; }
+        .card-header.success { background-color: #28a745; color: white; }
+        .card-header.warning { background-color: #ffc107; color: #212529; }
+        .card-header.danger { background-color: #dc3545; color: white; }
+        .card-header.info { background-color: #17a2b8; color: white; }
+        .card-header.primary { background-color: #007bff; color: white; }
+        .section-title { font-weight: 700; color: #333; margin: 2rem 0 1.5rem 0; border-bottom: 3px solid #007bff; padding-bottom: 0.5rem; }
+        .metric-value { font-size: 2rem; font-weight: 700; }
+        .metric-label { font-size: 0.9rem; color: #666; }
+        .timeline { border-left: 3px solid #007bff; padding-left: 20px; }
+        .timeline-item { margin-bottom: 15px; position: relative; }
+        .timeline-item::before { content: ''; position: absolute; left: -8px; top: 5px; width: 12px; height: 12px; border-radius: 50%; background: #007bff; }
+        #map { height: 400px; border-radius: 10px; }
+        .alert-primary { background-color: #cce7ff; border-color: #007bff; color: #004085; }
+        .impact-card { background: white; border-radius: 15px; padding: 25px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-left: 5px solid; }
+        .impact-card.solution { border-left-color: #28a745; }
+        .impact-card.challenge { border-left-color: #dc3545; }
+        .impact-card.opportunity { border-left-color: #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header text-center">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-md-4">
+                    <img src="ADRA%20logo%20white%20and%20green.PNG" alt="ADRA Logo" class="img-fluid" style="max-height: 100px;">
+                </div>
+                <div class="col-md-4">
+                    <h1><i class="fas fa-recycle"></i> Mali Waste Management EIA Dashboard</h1>
+                    <p class="lead">Tominian & San Districts - Actionable Solutions for 392,000 IDPs</p>
+                    <p class="mb-0">Partners: ADRA & AFAD | Local Implementation through Steering Committee</p>
+                </div>
+                <div class="col-md-4">
+                    <img src="mali-afad.png" alt="AFAD Logo" class="img-fluid" style="max-height: 100px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Executive Summary -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header primary">
+                        <i class="fas fa-heart"></i> Mission-Critical Waste Management Integration
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-primary" role="alert">
+                            <strong>Life-saving assistance remains our absolute priority.</strong> In Mali's challenging context with 392,000 internally displaced persons, sustainable waste management directly protects the water resources and community health that humanitarian aid depends on. Our EIA findings show that integrating waste management into WaSH activities, cash-for-work programs, and community training creates immediate health benefits while building long-term resilience.
+                        </div>
+                        <div class="row text-center">
+                            <div class="col-md-3">
+                                <div class="metric-value text-primary">392,000</div>
+                                <div class="metric-label">IDPs in Mali</div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="metric-value text-success">5</div>
+                                <div class="metric-label">Rural Municipalities</div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="metric-value text-info">100%</div>
+                                <div class="metric-label">Local Experts</div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="metric-value text-warning">25%</div>
+                                <div class="metric-label">WaSH Focus</div>
+                            </div>
+                        </div>
+                        <h5 class="mt-4">Key Highlights:</h5>
+                        <ul class="small">
+                            <li>Our approach ensures the protection of water resources and community health, safeguarding humanitarian aid effectiveness.</li>
+                            <li>Integrating waste management into existing programs yields immediate health benefits and long-term community resilience.</li>
+                            <li>We provide a comprehensive implementation roadmap, complete with feasible solutions for immediate and long-term impact.</li>
+                            <li>Our evidence-based approach guarantees sustainability and scalability in the context of Mali's humanitarian crisis.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real Tangible Benefits -->
+        <h2 class="section-title"><i class="fas fa-chart-line"></i> Programmatic Benefits: How Waste Management Enhances Project Impact</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="impact-card solution">
+                    <h5><i class="fas fa-tint text-primary"></i> Water Point Protection</h5>
+                    <p><strong>Direct Benefit:</strong> Waste management at rehabilitated water points prevents contamination, protecting the €2.5M+ investment in WaSH infrastructure.</p>
+                    <ul class="small">
+                        <li>Designated waste areas at each water point</li>
+                        <li>Training water committees on waste protocols</li>
+                        <li>Integration with Activity 3.4 maintenance training</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="impact-card solution">
+                    <h5><i class="fas fa-coins text-success"></i> Economic Opportunities</h5>
+                    <p><strong>Direct Benefit:</strong> Cash-for-work waste management creates immediate income for vulnerable women-headed households.</p>
+                    <ul class="small">
+                        <li>Women-led waste collection teams</li>
+                        <li>Integration with Activity 3.3 construction work</li>
+                        <li>Sustainable community service jobs</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="impact-card solution">
+                    <h5><i class="fas fa-shield-alt text-info"></i> Health Protection</h5>
+                    <p><strong>Direct Benefit:</strong> Proper waste handling reduces disease transmission, supporting hygiene promotion efforts (Activity 3.5).</p>
+                    <ul class="small">
+                        <li>Hazardous waste safety protocols</li>
+                        <li>Integration with community health worker training</li>
+                        <li>Visual guides for waste segregation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Field-Level Implementation -->
+        <h2 class="section-title"><i class="fas fa-tools"></i> Field-Level Implementation: What Works on the Ground</h2>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header success">Immediate Actions Integrated with Project Activities</div>
+                    <div class="card-body">
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <h6><i class="fas fa-hammer"></i> During WaSH Construction (Activity 3.3)</h6>
+                                <p><strong>Action:</strong> Mandate waste sorting at all construction sites. Separate areas for metal (old pipes, pump parts), concrete rubble, and packaging materials.</p>
+                                <p><strong>Tools:</strong> Provide sorting containers, protective equipment for workers.</p>
+                                <p><strong>Compliance:</strong> Follows local construction regulations and environmental laws.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <h6><i class="fas fa-users"></i> Through Cash-for-Work Programs</h6>
+                                <p><strong>Action:</strong> Hire women-led teams for waste collection at water points and community centers.</p>
+                                <p><strong>Tools:</strong> Collection carts, protective gear, sorting equipment.</p>
+                                <p><strong>Integration:</strong> Links with existing women's platforms and steering committee structures.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <h6><i class="fas fa-graduation-cap"></i> Within Training Programs (Activity 3.4 & 3.5)</h6>
+                                <p><strong>Action:</strong> Add waste management modules to water committee and health worker training.</p>
+                                <p><strong>Tools:</strong> Visual guides, demonstration sites at rehabilitated water points.</p>
+                                <p><strong>Sustainability:</strong> Local technicians trained in renewable energy component disposal.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header info">Project Location</div>
+                    <div class="card-body">
+                        <div id="map"></div>
+                        <p class="small mt-2"><strong>Implementation Area:</strong> Five rural municipalities in Cercle de Tominian and Cercle de San, Southeast Mali, near Burkina Faso border.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Critical Waste Streams & Solutions -->
+        <h2 class="section-title"><i class="fas fa-recycle"></i> Critical Waste Streams: Evidence-Based Solutions</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header warning">High-Volume Waste Streams</div>
+                    <div class="card-body">
+                        <canvas id="wasteCompositionChart" height="200"></canvas>
+                        <div class="mt-3">
+                            <p class="small"><strong>Key Finding:</strong> Construction activities generate 45% of project-related waste, followed by food packaging from aid distribution (35%).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header danger">Critical Gaps Identified</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6 text-center">
+                                <div class="metric-value text-danger">0%</div>
+                                <div class="metric-label">Hazardous waste management</div>
+                            </div>
+                            <div class="col-6 text-center">
+                                <div class="metric-value text-warning">Limited</div>
+                                <div class="metric-label">Recycling access outside cities</div>
+                            </div>
+                        </div>
+                        <hr>
+                        <h6><i class="fas fa-exclamation-triangle"></i> Priority Actions:</h6>
+                        <ul class="small">
+                            <li>Create designated collection points for electronics and chemicals</li>
+                            <li>Train health facility staff on hazardous waste handling</li>
+                            <li>Establish demonstration sites for proper practices</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feasible Solutions -->
+        <h2 class="section-title"><i class="fas fa-check-circle"></i> Feasible Solutions: What Can Be Implemented Immediately</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header success">Community-Based Solutions</div>
+                    <div class="card-body">
+                        <h6><i class="fas fa-seedling"></i> Organic Waste Management</h6>
+                        <ul class="small">
+                            <li>Simple composting techniques using local materials</li>
+                            <li>Animal feed from kitchen scraps</li>
+                            <li>Community gardens for food security</li>
+                        </ul>
+                        <h6><i class="fas fa-hammer"></i> Construction Material Reuse</h6>
+                        <ul class="small">
+                            <li>Cement bag repurposing for storage</li>
+                            <li>Metal component recycling</li>
+                            <li>Compressed earth blocks from local materials</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header info">Technology Integration</div>
+                    <div class="card-body">
+                        <h6><i class="fas fa-calculator"></i> Carbon Footprint Tracking</h6>
+                        <ul class="small">
+                            <li>Humanitarian Carbon Calculator implementation</li>
+                            <li>Monthly follow-up sessions with local staff</li>
+                            <li>Emission tracking systems</li>
+                        </ul>
+                        <h6><i class="fas fa-solar-panel"></i> Renewable Energy Waste</h6>
+                        <ul class="small">
+                            <li>Safe disposal protocols for solar components</li>
+                            <li>Battery recycling procedures</li>
+                            <li>Electronic waste collection points</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header primary">Procurement Innovation</div>
+                    <div class="card-body">
+                        <h6><i class="fas fa-leaf"></i> Sustainable Sourcing</h6>
+                        <ul class="small">
+                            <li>Local cooperative partnerships for organic food</li>
+                            <li>Energy-saving cookstove distribution</li>
+                            <li>Responsible fuelwood harvesting training</li>
+                        </ul>
+                        <h6><i class="fas fa-handshake"></i> Supplier Collaboration</h6>
+                        <ul class="small">
+                            <li>Co-create environmental standards where feasible</li>
+                            <li>Water conservation during construction</li>
+                            <li>Rainwater harvesting integration</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Implementation Timeline -->
+        <h2 class="section-title"><i class="fas fa-calendar-alt"></i> Implementation Roadmap: Phased Approach</h2>
+        <div class="card">
+            <div class="card-header primary">12-Month Implementation Plan</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card border-danger">
+                            <div class="card-header bg-danger text-white">Months 1-3: Foundation</div>
+                            <div class="card-body small">
+                                <ul>
+                                    <li>Train ADRA/AFAD staff on waste protocols</li>
+                                    <li>Establish women-led waste committees</li>
+                                    <li>Set up demonstration sites at first water points</li>
+                                    <li>Begin hazardous waste identification training</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-warning">
+                            <div class="card-header bg-warning text-dark">Months 4-6: Scale-Up</div>
+                            <div class="card-body small">
+                                <ul>
+                                    <li>Launch cash-for-work waste collection</li>
+                                    <li>Integrate waste management in all construction</li>
+                                    <li>Start composting pilots in communities</li>
+                                    <li>Implement Carbon Calculator tracking</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-info">
+                            <div class="card-header bg-info text-white">Months 7-9: Integration</div>
+                            <div class="card-body small">
+                                <ul>
+                                    <li>Full integration with hygiene promotion</li>
+                                    <li>Establish specialized waste collection points</li>
+                                    <li>Scale successful composting models</li>
+                                    <li>Begin supplier sustainability partnerships</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-success">
+                            <div class="card-header bg-success text-white">Months 10-12: Sustainability</div>
+                            <div class="card-body small">
+                                <ul>
+                                    <li>Transfer management to local committees</li>
+                                    <li>Establish long-term maintenance protocols</li>
+                                    <li>Document lessons learned</li>
+                                    <li>Plan for post-project sustainability</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Strategic Impact -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="impact-card" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white;">
+                    <div class="text-center">
+                        <h3><i class="fas fa-rocket"></i> Strategic Impact: Evidence-Based Waste Management</h3>
+                        <p class="lead">This EIA transforms waste management from a project risk into a strategic advantage, creating immediate health benefits, economic opportunities, and long-term community resilience.</p>
+                        <div class="row mt-4">
+                            <div class="col-md-4">
+                                <h5><i class="fas fa-shield-alt"></i> Risk Mitigation</h5>
+                                <p>Prevents water contamination and health hazards that could undermine humanitarian assistance effectiveness.</p>
+                            </div>
+                            <div class="col-md-4">
+                                <h5><i class="fas fa-coins"></i> Value Creation</h5>
+                                <p>Generates income opportunities while building essential community infrastructure and capacity.</p>
+                            </div>
+                            <div class="col-md-4">
+                                <h5><i class="fas fa-leaf"></i> Sustainability</h5>
+                                <p>Establishes systems that continue benefiting communities long after project completion.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Map
+        const map = L.map('map').setView([13.28, -4.59], 8);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        
+        // Project locations
+        L.marker([13.28573, -4.59082]).addTo(map)
+            .bindPopup('<b>Tominian District</b><br>Primary implementation area')
+            .openPopup();
+        L.marker([13.21809, -4.97665]).addTo(map)
+            .bindPopup('<b>San District</b><br>Secondary implementation area');
+
+        // Waste Composition Chart
+        const ctx = document.getElementById('wasteCompositionChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Construction Debris', 'Food Packaging', 'E-Waste (Renewable Energy)', 'Organic Waste', 'Other'],
+                datasets: [{
+                    data: [45, 35, 10, 7, 3],
+                    backgroundColor: ['#dc3545', '#ffc107', '#6f42c1', '#28a745', '#6c757d']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
