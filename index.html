@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADRA Mali Environmental Dashboards</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.95);
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+        .btn-custom {
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .icon-large {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: #2a5298;
+        }
+        .main-title {
+            color: white;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .dashboard-icon i {
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+            transition: transform 0.3s ease;
+        }
+        .card:hover .dashboard-icon i {
+            transform: scale(1.1);
+        }
+        .card-title {
+            color: #2a5298;
+            font-weight: 700;
+            margin: 15px 0;
+        }
+        .card-text {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .footer {
+            margin-top: 50px;
+            padding: 20px 0;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+        }
+        .logo-container {
+            margin-bottom: 10px;
+        }
+        .logo-container img {
+            max-height: 80px;
+            width: auto;
+            transition: transform 0.3s ease;
+        }
+        .logo-container img:hover {
+            transform: scale(1.05);
+        }
+        .section-title {
+            color: white;
+            text-align: center;
+            margin: 40px 0 30px;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <!-- Header Section -->
+        <div class="text-center mb-5">
+            <div class="logo-container">
+                <img src="ADRA%20logo%20white%20and%20green.PNG" alt="ADRA Logo" class="img-fluid">
+            </div>
+            <h1 class="main-title">ADRA Mali</h1>
+            <p class="lead text-white mb-0">Environmental Impact Assessment Dashboards</p>
+            <p class="text-white-50">Tominian & San Districts | 50,000 Direct Beneficiaries</p>
+            <hr class="my-4 bg-light opacity-25" style="max-width: 300px; margin: 20px auto;">
+            <p class="text-white">Evidence-based solutions for sustainable humanitarian response</p>
+        </div>
+        
+        <h2 class="section-title">Environmental Dashboards</h2>
+        
+        <div class="row justify-content-center">
+            <!-- Waste Management Dashboard -->
+            <div class="col-md-8 col-lg-6 col-xl-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="dashboard-icon mb-3">
+                            <i class="fas fa-recycle"></i>
+                        </div>
+                        <h3 class="card-title">Waste Management</h3>
+                        <p class="card-text">Strategic EIA findings addressing critical waste management gaps, community-based solutions, and evidence-based implementation for 50,000 beneficiaries in Tominian & San districts.</p>
+                        <div class="mt-auto pt-3">
+                            <a href="mali-waste-dashboard.html" class="btn btn-primary btn-custom w-100">
+                                <i class="fas fa-arrow-right me-2"></i>View Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Coming Soon Placeholder -->
+            <div class="col-md-8 col-lg-6 col-xl-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center p-4 d-flex flex-column">
+                        <div class="mb-3">
+                            <i class="fas fa-plus-circle icon-large" style="color: #ddd;"></i>
+                        </div>
+                        <h3 class="card-title text-muted">More Dashboards Coming Soon</h3>
+                        <p class="card-text text-muted">Additional environmental impact assessments and monitoring tools will be added as they become available.</p>
+                        <div class="mt-auto pt-3">
+                            <button class="btn btn-outline-secondary w-100" disabled>Coming Soon</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- About Section -->
+        <div class="row justify-content-center mt-5">
+            <div class="col-lg-10">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <h3 class="card-title text-center mb-4" style="color: #2a5298;">About These Dashboards</h3>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>These interactive dashboards present Environmental Impact Assessment findings and humanitarian response strategies for ADRA's projects in Mali, with a focus on the Tominian and San districts.</p>
+                                <p>Developed in partnership with local communities and stakeholders, these tools provide actionable insights for sustainable development and humanitarian assistance.</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="fw-bold mb-3" style="color: #2a5298;">Key Features:</h5>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Evidence-based environmental analysis</li>
+                                    <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Community-focused solutions</li>
+                                    <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Practical implementation guidance</li>
+                                    <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Real-time monitoring capabilities</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="footer text-center">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <p class="mb-2">&copy; 2025 ADRA Mali. All rights reserved.</p>
+                        <p class="small text-white-50">For more information, please contact the ADRA Mali office.</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
