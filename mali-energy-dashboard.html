@@ -12,6 +12,39 @@
     <style>
         body { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
         .container { background: rgba(255,255,255,0.95); margin: 20px auto; border-radius: 15px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .nav-menu {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav-menu a {
+            color: #4a5568;
+            text-decoration: none;
+            padding: 10px 15px;
+            margin: 0 5px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .nav-menu a:hover {
+            background: #e2e8f0;
+            color: #2d3748;
+            transform: translateY(-2px);
+        }
+        
+        .nav-menu a.active {
+            background: #4299e1;
+            color: white;
+        }
+        
+        .nav-menu a i {
+            margin-right: 5px;
+        }
+
         .header { background: linear-gradient(135deg, #e67e22, #f39c12); color: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; }
         .card { border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
         .card-header { font-weight: bold; border-bottom: none; border-radius: 10px 10px 0 0; }
@@ -54,6 +87,15 @@
             </div>
         </div>
 
+        <!-- Navigation Menu -->
+        <div class="nav-menu text-center">
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="mali-water-dashboard.html"><i class="fas fa-tint"></i> Water</a>
+            <a href="mali-vegetation-dashboard.html"><i class="fas fa-tree"></i> Vegetation</a>
+            <a href="mali-waste-dashboard.html"><i class="fas fa-recycle"></i> Waste</a>
+            <a href="mali-energy-dashboard.html" class="active"><i class="fas fa-bolt"></i> Energy</a>
+        </div>
+
         <!-- Key Energy Challenges Overview -->
         <div class="alert alert-primary" role="alert">
             <h4 class="alert-heading"><i class="fas fa-exclamation-triangle"></i> Energy Crisis in Mali Project Areas</h4>
@@ -92,6 +134,7 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header danger">Critical Energy Dependencies</div>
+
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-4">
