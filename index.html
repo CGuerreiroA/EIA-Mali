@@ -105,10 +105,15 @@
 </head>
 <body>
     <div class="container py-5">
-        <!-- Header Section -->
+        <!-- Header Section with Logos -->
         <div class="text-center mb-5">
-            <div class="logo-container">
-                <img src="ADRA%20logo%20white%20and%20green.PNG" alt="ADRA Logo" class="img-fluid">
+            <div class="row justify-content-center align-items-center mb-4">
+                <div class="col-auto">
+                    <img src="ADRA%20logo%20white%20and%20green.PNG" alt="ADRA Logo" style="max-height: 80px; width: auto; margin: 0 15px;">
+                </div>
+                <div class="col-auto">
+                    <img src="mali-afad.png" alt="AFAD Logo" style="max-height: 80px; width: auto; margin: 0 15px;">
+                </div>
             </div>
             <h1 class="main-title">ADRA Mali</h1>
             <p class="lead text-white mb-0">Environmental Impact Assessment Dashboards</p>
@@ -119,39 +124,51 @@
         
         <h2 class="section-title">Environmental Dashboards</h2>
         
-        <div class="row justify-content-center">
-            <!-- Waste Management Dashboard -->
-            <div class="col-md-8 col-lg-6 col-xl-4 mb-4">
+        <div class="row g-4 justify-content-center">
+            <!-- Water Scarcity Dashboard -->
+            <div class="col-lg-4 col-md-6">
                 <div class="card h-100">
                     <div class="card-body text-center p-4">
-                        <div class="dashboard-icon mb-3">
-                            <i class="fas fa-recycle"></i>
+                        <div class="dashboard-icon">
+                            <i class="fas fa-tint icon-large"></i>
                         </div>
-                        <h3 class="card-title">Waste Management</h3>
-                        <p class="card-text">Strategic EIA findings addressing critical waste management gaps, community-based solutions, and evidence-based implementation for 50,000 beneficiaries in Tominian & San districts.</p>
-                        <div class="mt-auto pt-3">
-                            <a href="mali-waste-dashboard.html" class="btn btn-primary btn-custom w-100">
-                                <i class="fas fa-arrow-right me-2"></i>View Dashboard
-                            </a>
+                        <h4 class="card-title">Water Scarcity Dashboard</h4>
+                        <p class="card-text">Critical water challenges, climate impacts, WASH conditions, and community-managed solutions for sustainable water access in Tominian and San districts.</p>
+                        <a href="mali-water-dashboard.html" class="btn btn-info btn-custom">
+                            <i class="fas fa-chart-line me-2"></i>View Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Waste Management Dashboard -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="dashboard-icon">
+                            <i class="fas fa-recycle icon-large"></i>
                         </div>
+                        <h4 class="card-title">Waste Management Dashboard</h4>
+                        <p class="card-text">Comprehensive analysis of waste management challenges, EIA findings, and community-based solutions for sustainable waste handling in Mali's project areas.</p>
+                        <a href="mali-waste-dashboard.html" class="btn btn-primary btn-custom">
+                            <i class="fas fa-chart-line me-2"></i>View Dashboard
+                        </a>
                     </div>
                 </div>
             </div>
             
             <!-- Energy Dashboard -->
-            <div class="col-md-8 col-lg-6 col-xl-4 mb-4">
+            <div class="col-lg-4 col-md-6">
                 <div class="card h-100">
                     <div class="card-body text-center p-4">
-                        <div class="dashboard-icon mb-3">
-                            <i class="fas fa-solar-panel icon-large"></i>
+                        <div class="dashboard-icon">
+                            <i class="fas fa-bolt icon-large"></i>
                         </div>
-                        <h3 class="card-title">Energy Solutions</h3>
-                        <p class="card-text">Sustainable energy strategies including solar-powered water infrastructure, energy-efficient cooking solutions, and community-led renewable energy management for greener humanitarian response.</p>
-                        <div class="mt-auto pt-3">
-                            <a href="mali-energy-dashboard.html" class="btn btn-warning btn-custom w-100">
-                                <i class="fas fa-bolt me-2"></i>View Dashboard
-                            </a>
-                        </div>
+                        <h4 class="card-title">Energy Dashboard</h4>
+                        <p class="card-text">Energy challenges, renewable solutions, and community participation in sustainable energy management for humanitarian operations.</p>
+                        <a href="mali-energy-dashboard.html" class="btn btn-success btn-custom">
+                            <i class="fas fa-chart-area me-2"></i>View Dashboard
+                        </a>
                     </div>
                 </div>
             </div>
