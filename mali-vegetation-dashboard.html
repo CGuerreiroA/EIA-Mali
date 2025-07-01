@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mali Vegetation Degradation & Biomass Conservation Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        :root {
+            --primary-green: #2E7D32;
+            --secondary-green: #4CAF50;
+            --accent-brown: #8D6E63;
+            --light-green: #E8F5E8;
+            --warning-orange: #FF8F00;
+            --danger-red: #D32F2F;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--light-green) 0%, #F1F8E9 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .logo {
+            height: 60px;
+            width: auto;
+        }
+
+        .nav-menu {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            margin: 0 0.25rem;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-menu a:hover, .nav-menu a.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--primary-green);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-top: 4px solid var(--primary-green);
+        }
+
+        .card h3 {
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 1rem;
+        }
+
+        .map-container {
+            height: 300px;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .activity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .activity-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--secondary-green);
+        }
+
+        .activity-icon {
+            font-size: 2rem;
+            color: var(--secondary-green);
+            margin-bottom: 1rem;
+        }
+
+        .timeline {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--light-green);
+            border-radius: 10px;
+        }
+
+        .timeline-icon {
+            background: var(--primary-green);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+        }
+
+        .priority-matrix {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .priority-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 10px;
+            background: var(--light-green);
+        }
+
+        .priority-high { border-left: 5px solid var(--danger-red); }
+        .priority-medium { border-left: 5px solid var(--warning-orange); }
+        .priority-low { border-left: 5px solid var(--secondary-green); }
+
+        .degradation-severe { color: var(--danger-red); }
+        .degradation-moderate { color: var(--warning-orange); }
+        .degradation-low { color: var(--secondary-green); }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="logo-container">
+                <img src="ADRA logo white and green.PNG" alt="ADRA Logo" class="logo">
+                <img src="mali-afad.png" alt="AFAD Logo" class="logo">
+            </div>
+            <h1 class="text-center mb-0">Mali Vegetation Degradation & Biomass Conservation Dashboard</h1>
+            <p class="text-center mb-0">Community-Managed Environmental Restoration for Tominian & San Districts</p>
+            
+            <div class="nav-menu text-center">
+                <a href="index.html"><i class="fas fa-home"></i> Home</a>
+                <a href="mali-water-dashboard.html"><i class="fas fa-tint"></i> Water</a>
+                <a href="mali-waste-dashboard.html"><i class="fas fa-recycle"></i> Waste</a>
+                <a href="mali-energy-dashboard.html"><i class="fas fa-bolt"></i> Energy</a>
+                <a href="mali-vegetation-dashboard.html" class="active"><i class="fas fa-tree"></i> Vegetation</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Key Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">56,015</div>
+                <div class="stat-label">Total Population<br>(50K Host + 6K IDPs)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number degradation-severe">100%</div>
+                <div class="stat-label">Vegetation<br>Degradation</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number degradation-moderate">25-50%</div>
+                <div class="stat-label">Soil<br>Degradation</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">2,714</div>
+                <div class="stat-label">Project Area<br>(km²)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number degradation-moderate">50%</div>
+                <div class="stat-label">Land Used for<br>Farming</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number degradation-severe">0</div>
+                <div class="stat-label">Real Forests<br>Remaining</div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Land Degradation Causes -->
+            <div class="card">
+                <h3>🌱 Land Degradation Drivers</h3>
+                <div class="chart-container">
+                    <canvas id="degradationChart"></canvas>
+                </div>
+                <p><strong>Critical Finding:</strong> Multiple interconnected factors drive 100% vegetation degradation: deforestation for fuel, overgrazing by livestock, agricultural expansion, wildfires, and climate change impacts.</p>
+            </div>
+
+            <!-- Project Intervention Areas Map -->
+            <div class="card">
+                <h3>🗺️ Restoration Target Areas</h3>
+                <div class="map-container" id="vegetationMap"></div>
+                <p><strong>Focus Areas:</strong> Tominian and San districts with priority on severely degraded grasslands, savannas, and shrublands requiring immediate community-led restoration.</p>
+            </div>
+
+            <!-- Land Use Distribution -->
+            <div class="card">
+                <h3>🚜 Current Land Use</h3>
+                <div class="chart-container">
+                    <canvas id="landUseChart"></canvas>
+                </div>
+                <p><strong>Context:</strong> Farming dominates 50% of area with extensive smallholder agriculture (1-5 ha farms). Grazing pressure exceeds carrying capacity, contributing to degradation.</p>
+            </div>
+
+            <!-- Biodiversity Status -->
+            <div class="card">
+                <h3>🦋 Biodiversity Conservation</h3>
+                <div class="chart-container">
+                    <canvas id="biodiversityChart"></canvas>
+                </div>
+                <p><strong>Endangered Species:</strong> Medium-high plant diversity includes threatened Shea trees, Faidherbia albida. Low wildlife diversity with declining partridges, rabbits, and bees.</p>
+            </div>
+        </div>
+
+        <!-- Community-Managed Solutions -->
+        <div class="card mb-4">
+            <h3>🤝 Community-Centered Restoration Activities</h3>
+            <p class="mb-4">All interventions designed for local applicability, cost efficiency, community agreement, operation, and management:</p>
+            
+            <div class="activity-grid">
+                <div class="activity-card">
+                    <div class="activity-icon"><i class="fas fa-seedling"></i></div>
+                    <h5>Reforestation Programs</h5>
+                    <p><strong>Community-Led:</strong> Native species nurseries (Shea, Faidherbia albida) managed by local groups. Traditional planting methods combined with simple protection techniques.</p>
+                    <small class="text-muted">Cost-effective, uses local seeds, builds on traditional knowledge</small>
+                </div>
+
+                <div class="activity-card">
+                    <div class="activity-icon"><i class="fas fa-fire"></i></div>
+                    <h5>Energy-Saving Cookstoves</h5>
+                    <p><strong>Local Production:</strong> Locally manufactured stoves using available materials. Training local artisans for production, repair, and maintenance.</p>
+                    <small class="text-muted">Reduces fuelwood demand, creates local jobs, fits cooking practices</small>
+                </div>
+
+                <div class="activity-card">
+                    <div class="activity-icon"><i class="fas fa-leaf"></i></div>
+                    <h5>Assisted Natural Regeneration</h5>
+                    <p><strong>Community Protection:</strong> Local agreements to protect degraded areas. Community-managed grazing rotations and natural recovery zones.</p>
+                    <small class="text-muted">Low-cost, builds on natural processes, community ownership</small>
+                </div>
+
+                <div class="activity-card">
+                    <div class="activity-icon"><i class="fas fa-tractor"></i></div>
+                    <h5>Regenerative Agriculture</h5>
+                    <p><strong>Traditional + Modern:</strong> Crop rotation with local varieties (Millet, Fonio, Sorghum). Agroforestry using native trees. Community seed banks.</p>
+                    <small class="text-muted">Improves soil fertility, increases yields, preserves local varieties</small>
+                </div>
+
+                <div class="activity-card">
+                    <div class="activity-icon"><i class="fas fa-cut"></i></div>
+                    <h5>Sustainable Harvesting</h5>
+                    <p><strong>Community Agreements:</strong> Training on responsible fuelwood collection. Community-managed harvesting quotas and rotation systems.</p>
+                    <small class="text-muted">Balances needs with conservation, community enforcement</small>
+                </div>
+
+                <div class="activity-card">
+                    <div class="activity-icon"><i class="fas fa-users"></i></div>
+                    <h5>Livestock Management</h5>
+                    <p><strong>Grazing Committees:</strong> Community-led stocking rate management. Rotational grazing systems. Improved animal health to reduce herd sizes.</p>
+                    <small class="text-muted">Reduces overgrazing, maintains livelihoods, community-controlled</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Implementation Timeline -->
+        <div class="timeline">
+            <h3>📅 12-Month Community Implementation Timeline</h3>
+            <div class="timeline-item">
+                <div class="timeline-icon">1</div>
+                <div>
+                    <strong>Months 1-3: Community Mobilization</strong><br>
+                    Village meetings, traditional leader engagement, community agreements on restoration priorities and management structures.
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-icon">2</div>
+                <div>
+                    <strong>Months 4-6: Capacity Building</strong><br>
+                    Training local trainers, establishing nurseries, cookstove production training, forming management committees.
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-icon">3</div>
+                <div>
+                    <strong>Months 7-9: Implementation</strong><br>
+                    Tree planting, cookstove distribution, protected area establishment, regenerative agriculture pilot plots.
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-icon">4</div>
+                <div>
+                    <strong>Months 10-12: Consolidation</strong><br>
+                    Community monitoring systems, maintenance training, scaling successful practices, sustainability planning.
+                </div>
+            </div>
+        </div>
+
+        <!-- Priority Implementation Matrix -->
+        <div class="priority-matrix">
+            <h3>🎯 Community-Managed Priority Actions</h3>
+            <div class="priority-item priority-high">
+                <div class="me-3"><i class="fas fa-exclamation-triangle text-danger"></i></div>
+                <div>
+                    <strong>HIGH PRIORITY:</strong> Energy-saving cookstoves + Community nurseries for native species
+                    <br><small>Immediate impact on fuelwood demand + Long-term restoration foundation</small>
+                </div>
+            </div>
+            <div class="priority-item priority-medium">
+                <div class="me-3"><i class="fas fa-balance-scale text-warning"></i></div>
+                <div>
+                    <strong>MEDIUM PRIORITY:</strong> Grazing management + Assisted natural regeneration
+                    <br><small>Reduces ongoing degradation + Allows natural recovery</small>
+                </div>
+            </div>
+            <div class="priority-item priority-low">
+                <div class="me-3"><i class="fas fa-seedling text-success"></i></div>
+                <div>
+                    <strong>ONGOING:</strong> Regenerative agriculture + Sustainable harvesting training
+                    <br><small>Builds long-term resilience + Changes practices gradually</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Impact Summary -->
+        <div class="card">
+            <h3>📊 Expected Community-Managed Outcomes</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Environmental Benefits</h5>
+                    <ul>
+                        <li>Reduced deforestation pressure through efficient cookstoves</li>
+                        <li>Native forest regeneration in protected community areas</li>
+                        <li>Improved soil fertility through regenerative practices</li>
+                        <li>Enhanced biodiversity in restoration zones</li>
+                        <li>Reduced erosion and improved water retention</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h5>Community Benefits</h5>
+                    <ul>
+                        <li>Local employment in nursery and cookstove production</li>
+                        <li>Reduced time and labor for fuelwood collection</li>
+                        <li>Improved agricultural yields from better soil</li>
+                        <li>Strengthened community governance and cooperation</li>
+                        <li>Enhanced resilience to climate shocks</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="alert alert-success mt-3">
+                <strong>Sustainability Key:</strong> All interventions designed for community ownership, operation, and management using local resources and traditional knowledge enhanced with simple, proven techniques.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Land Degradation Drivers Chart
+        const degradationCtx = document.getElementById('degradationChart').getContext('2d');
+        new Chart(degradationCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Deforestation', 'Overgrazing', 'Agriculture Expansion', 'Wildfires', 'Climate Change'],
+                datasets: [{
+                    label: 'Impact Level',
+                    data: [95, 85, 80, 70, 75],
+                    backgroundColor: ['#D32F2F', '#FF5722', '#FF8F00', '#FFA000', '#FF6F00'],
+                    borderColor: ['#B71C1C', '#D84315', '#E65100', '#FF8F00', '#E65100'],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Degradation Impact (%)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Land Use Distribution Chart
+        const landUseCtx = document.getElementById('landUseChart').getContext('2d');
+        new Chart(landUseCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Farming', 'Grazing', 'Degraded Land', 'Settlements', 'Water Bodies'],
+                datasets: [{
+                    data: [50, 30, 15, 3, 2],
+                    backgroundColor: ['#8BC34A', '#CDDC39', '#FF5722', '#9E9E9E', '#2196F3'],
+                    borderColor: ['#689F38', '#9E9D24', '#D84315', '#616161', '#1976D2'],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Biodiversity Status Chart
+        const biodiversityCtx = document.getElementById('biodiversityChart').getContext('2d');
+        new Chart(biodiversityCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Plant Diversity', 'Tree Species', 'Wildlife', 'Pollinators', 'Soil Organisms', 'Aquatic Life'],
+                datasets: [{
+                    label: 'Current Status',
+                    data: [65, 40, 25, 30, 35, 45],
+                    backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                    borderColor: '#4CAF50',
+                    borderWidth: 2
+                }, {
+                    label: 'Target (5 years)',
+                    data: [80, 70, 50, 60, 65, 60],
+                    backgroundColor: 'rgba(46, 125, 50, 0.2)',
+                    borderColor: '#2E7D32',
+                    borderWidth: 2,
+                    borderDash: [5, 5]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            stepSize: 20
+                        }
+                    }
+                }
+            }
+        });
+
+        // Initialize Map
+        const map = L.map('vegetationMap').setView([13.5, -5.5], 8);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Add project areas
+        const tominianMarker = L.marker([13.2, -5.4]).addTo(map);
+        tominianMarker.bindPopup("<b>Tominian District</b><br>Priority restoration area<br>Severe vegetation degradation");
+
+        const sanMarker = L.marker([13.3, -4.9]).addTo(map);
+        sanMarker.bindPopup("<b>San District</b><br>Community-managed restoration<br>Focus on native species");
+
+        // Add degradation zones
+        const degradationZone1 = L.circle([13.25, -5.2], {
+            color: '#D32F2F',
+            fillColor: '#FFCDD2',
+            fillOpacity: 0.3,
+            radius: 15000
+        }).addTo(map);
+        degradationZone1.bindPopup("Severe Degradation Zone<br>100% vegetation loss<br>Priority for reforestation");
+
+        const degradationZone2 = L.circle([13.4, -5.0], {
+            color: '#FF8F00',
+            fillColor: '#FFE0B2',
+            fillOpacity: 0.3,
+            radius: 12000
+        }).addTo(map);
+        degradationZone2.bindPopup("Moderate Degradation Zone<br>Suitable for natural regeneration<br>Community grazing management");
+    </script>
+</body>
+</html>
