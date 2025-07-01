@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mali Energy EIA Dashboard - Tominian & San Districts</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
+        .container { background: rgba(255,255,255,0.95); margin: 20px auto; border-radius: 15px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #e67e22, #f39c12); color: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; }
+        .card { border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .card-header { font-weight: bold; border-bottom: none; border-radius: 10px 10px 0 0; }
+        .card-header.success { background-color: #27ae60; color: white; }
+        .card-header.warning { background-color: #f39c12; color: white; }
+        .card-header.danger { background-color: #e74c3c; color: white; }
+        .card-header.info { background-color: #3498db; color: white; }
+        .card-header.primary { background-color: #2c3e50; color: white; }
+        .section-title { font-weight: 700; color: #333; margin: 2rem 0 1.5rem 0; border-bottom: 3px solid #f39c12; padding-bottom: 0.5rem; }
+        .metric-value { font-size: 2rem; font-weight: 700; }
+        .metric-label { font-size: 0.9rem; color: #666; }
+        .timeline { border-left: 3px solid #f39c12; padding-left: 20px; }
+        .timeline-item { margin-bottom: 15px; position: relative; }
+        .timeline-item::before { content: ''; position: absolute; left: -8px; top: 5px; width: 12px; height: 12px; border-radius: 50%; background: #f39c12; }
+        #map { height: 400px; border-radius: 10px; }
+        .alert-primary { background-color: #fff3cd; border-color: #f39c12; color: #856404; }
+        .impact-card { background: white; border-radius: 15px; padding: 25px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-left: 5px solid; }
+        .impact-card.solution { border-left-color: #27ae60; }
+        .impact-card.challenge { border-left-color: #e74c3c; }
+        .impact-card.opportunity { border-left-color: #f39c12; }
+        .energy-stat { text-align: center; padding: 20px; background: linear-gradient(135deg, #fff, #f8f9fa); border-radius: 10px; margin: 10px 0; }
+        .energy-icon { font-size: 3rem; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header text-center">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-md-4">
+                    <img src="ADRA%20logo%20white%20and%20green.PNG" alt="ADRA Logo" class="img-fluid" style="max-height: 100px;">
+                </div>
+                <div class="col-md-4">
+                    <h1><i class="fas fa-solar-panel"></i> Mali Energy EIA Dashboard</h1>
+                    <p class="lead">Tominian & San Districts - Sustainable Energy for 50,000 Beneficiaries</p>
+                    <p class="mb-0">Partners: ADRA & AFAD | Community-Led Solar Pump Management</p>
+                </div>
+                <div class="col-md-4">
+                    <img src="mali-afad.png" alt="AFAD Logo" class="img-fluid" style="max-height: 100px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Energy Challenges Overview -->
+        <div class="alert alert-primary" role="alert">
+            <h4 class="alert-heading"><i class="fas fa-exclamation-triangle"></i> Energy Crisis in Mali Project Areas</h4>
+            <p>The Tominian and San districts face acute energy challenges that directly impact humanitarian operations and community wellbeing. This dashboard presents evidence-based solutions for sustainable energy access, focusing on community participation and practical implementation.</p>
+        </div>
+
+        <!-- Strategic Impact Cards -->
+        <h2 class="section-title">Strategic Energy Solutions</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="impact-card solution">
+                    <h5><i class="fas fa-solar-panel text-warning"></i> Solar-Powered Water Infrastructure</h5>
+                    <p><strong>Direct Benefit:</strong> Solar pumps reduce operational costs by 70% while ensuring reliable water access for 50,000 beneficiaries, protecting the €2.5M+ WaSH investment.</p>
+                    <p><strong>Community Impact:</strong> Women-led committees manage and maintain solar systems, creating local technical capacity and reducing dependency on external support.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="impact-card opportunity">
+                    <h5><i class="fas fa-fire text-danger"></i> Energy-Efficient Cooking Solutions</h5>
+                    <p><strong>Direct Benefit:</strong> Improved cookstoves reduce fuelwood consumption by 50%, saving 3-4 hours daily for women and children while reducing respiratory health risks.</p>
+                    <p><strong>Environmental Impact:</strong> Decreased pressure on vegetation supports landscape restoration efforts and reduces carbon emissions by 2.5 tons CO₂/household/year.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="impact-card challenge">
+                    <h5><i class="fas fa-gas-pump text-primary"></i> Transportation Efficiency</h5>
+                    <p><strong>Direct Benefit:</strong> Carpooling and route optimization reduce fuel costs by 30% while improving project reach to remote communities.</p>
+                    <p><strong>Operational Impact:</strong> Systematic transport planning enables more frequent community visits and better service delivery coordination.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Energy Profile -->
+        <h2 class="section-title">Mali Energy Profile - Tominian & San Districts</h2>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header danger">Critical Energy Dependencies</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="energy-stat">
+                                    <div class="energy-icon text-danger"><i class="fas fa-fire"></i></div>
+                                    <div class="metric-value text-danger">60%</div>
+                                    <div class="metric-label">Traditional Biomass Stoves</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="energy-stat">
+                                    <div class="energy-icon text-warning"><i class="fas fa-burn"></i></div>
+                                    <div class="metric-value text-warning">30%</div>
+                                    <div class="metric-label">Improved Biomass Stoves</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="energy-stat">
+                                    <div class="energy-icon text-dark"><i class="fas fa-mountain"></i></div>
+                                    <div class="metric-value text-dark">10%</div>
+                                    <div class="metric-label">Charcoal Usage</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <div class="energy-stat">
+                                    <div class="energy-icon text-primary"><i class="fas fa-motorcycle"></i></div>
+                                    <div class="metric-value text-primary">100%</div>
+                                    <div class="metric-label">Gasoline-Dependent Transport</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="energy-stat">
+                                    <div class="energy-icon text-danger"><i class="fas fa-plug"></i></div>
+                                    <div class="metric-value text-danger">Unreliable</div>
+                                    <div class="metric-label">Grid Electricity</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header warning">Energy Impact on Women</div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-clock text-warning me-2"></i> <strong>3-4 hours daily</strong> collecting fuelwood</li>
+                            <li class="mb-2"><i class="fas fa-lungs text-danger me-2"></i> <strong>High respiratory risks</strong> from smoke exposure</li>
+                            <li class="mb-2"><i class="fas fa-tree text-success me-2"></i> <strong>Vegetation pressure</strong> from wood harvesting</li>
+                            <li class="mb-2"><i class="fas fa-female text-primary me-2"></i> <strong>Limited participation</strong> in income activities</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Immediate Actions -->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header success">Immediate Energy Actions - Integrated with Mali Activities</div>
+                    <div class="card-body">
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <h6><strong>Activity 3.3 Integration:</strong> Solar-Powered Water Points</h6>
+                                <p>Install solar pumps during water point rehabilitation, training local committees on maintenance and operation. <em>Reduces operational costs by 70%.</em></p>
+                            </div>
+                            <div class="timeline-item">
+                                <h6><strong>Activity 3.4 Integration:</strong> Energy-Efficient Cooking Training</h6>
+                                <p>Distribute improved cookstoves during nutrition awareness sessions, training women on efficient cooking techniques. <em>Saves 3-4 hours daily per household.</em></p>
+                            </div>
+                            <div class="timeline-item">
+                                <h6><strong>Activity 3.5 Integration:</strong> Sustainable Fuelwood Management</h6>
+                                <p>Train communities on responsible harvesting and assisted natural regeneration during capacity building sessions. <em>Supports vegetation restoration goals.</em></p>
+                            </div>
+                            <div class="timeline-item">
+                                <h6><strong>Office Operations:</strong> Renewable Energy Transition</h6>
+                                <p>Install solar panels for field offices and implement carpooling for staff transport. <em>Reduces operational carbon footprint by 40%.</em></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header info">Implementation Tools</div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-calculator text-primary me-2"></i> <strong>Humanitarian Carbon Calculator</strong></li>
+                            <li class="mb-2"><i class="fas fa-chart-line text-success me-2"></i> <strong>Energy Monitoring System</strong></li>
+                            <li class="mb-2"><i class="fas fa-users text-warning me-2"></i> <strong>Community Training Modules</strong></li>
+                            <li class="mb-2"><i class="fas fa-wrench text-info me-2"></i> <strong>Solar Maintenance Toolkit</strong></li>
+                            <li class="mb-2"><i class="fas fa-leaf text-success me-2"></i> <strong>Sustainable Procurement Guidelines</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Energy Solutions Matrix -->
+        <h2 class="section-title">Community-Based Energy Solutions</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header success">Cooking Energy Solutions</div>
+                    <div class="card-body">
+                        <h6><i class="fas fa-fire"></i> Improved Cookstoves Program</h6>
+                        <ul class="small">
+                            <li>Distribution to 12,500 households</li>
+                            <li>50% reduction in fuelwood consumption</li>
+                            <li>Training on efficient cooking techniques</li>
+                            <li>Local production and maintenance training</li>
+                        </ul>
+                        <h6 class="mt-3"><i class="fas fa-tree"></i> Sustainable Fuelwood</h6>
+                        <ul class="small">
+                            <li>Community-managed woodlots</li>
+                            <li>Responsible harvesting training</li>
+                            <li>Alternative fuel sources (agricultural waste)</li>
+                            <li>Reforestation for fuel security</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header info">Water Infrastructure Energy</div>
+                    <div class="card-body">
+                        <h6><i class="fas fa-solar-panel"></i> Solar Water Pumps</h6>
+                        <ul class="small">
+                            <li>25 solar-powered water points</li>
+                            <li>Community-led maintenance committees</li>
+                            <li>Technical training for local operators</li>
+                            <li>Backup system management</li>
+                        </ul>
+                        <h6 class="mt-3"><i class="fas fa-battery-full"></i> Energy Storage</h6>
+                        <ul class="small">
+                            <li>Battery management training</li>
+                            <li>Safe disposal protocols</li>
+                            <li>Local technician certification</li>
+                            <li>Preventive maintenance schedules</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header warning">Transport & Operations</div>
+                    <div class="card-body">
+                        <h6><i class="fas fa-car"></i> Efficient Transportation</h6>
+                        <ul class="small">
+                            <li>Staff carpooling system</li>
+                            <li>Route optimization planning</li>
+                            <li>Fuel consumption monitoring</li>
+                            <li>Local transport partnerships</li>
+                        </ul>
+                        <h6 class="mt-3"><i class="fas fa-building"></i> Office Energy</h6>
+                        <ul class="small">
+                            <li>Solar panels for field offices</li>
+                            <li>Energy-efficient equipment</li>
+                            <li>Staff energy awareness training</li>
+                            <li>Green procurement guidelines</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Implementation Timeline -->
+        <div class="card">
+            <div class="card-header primary">12-Month Energy Implementation Plan</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h6 class="text-primary">Months 1-3: Foundation</h6>
+                        <ul class="small">
+                            <li>Community energy assessments</li>
+                            <li>Solar pump site selection</li>
+                            <li>Cookstove distribution planning</li>
+                            <li>Training module development</li>
+                            <li>Baseline energy consumption measurement</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3">
+                        <h6 class="text-success">Months 4-6: Implementation</h6>
+                        <ul class="small">
+                            <li>Solar pump installation (Phase 1)</li>
+                            <li>Improved cookstove distribution</li>
+                            <li>Community training programs</li>
+                            <li>Office solar panel installation</li>
+                            <li>Transport optimization launch</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3">
+                        <h6 class="text-warning">Months 7-9: Expansion</h6>
+                        <ul class="small">
+                            <li>Solar pump installation (Phase 2)</li>
+                            <li>Advanced maintenance training</li>
+                            <li>Sustainable fuelwood programs</li>
+                            <li>Local technician certification</li>
+                            <li>Energy monitoring system setup</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3">
+                        <h6 class="text-info">Months 10-12: Sustainability</h6>
+                        <ul class="small">
+                            <li>Community ownership transition</li>
+                            <li>Impact assessment and reporting</li>
+                            <li>Maintenance protocol finalization</li>
+                            <li>Replication planning</li>
+                            <li>Carbon footprint evaluation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Strategic Impact Summary -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="impact-card" style="background: linear-gradient(135deg, #f39c12, #e67e22); color: white;">
+                    <div class="text-center">
+                        <h3><i class="fas fa-bolt"></i> Strategic Impact: Sustainable Energy for Humanitarian Response</h3>
+                        <div class="row mt-4">
+                            <div class="col-md-3">
+                                <h4>50,000</h4>
+                                <p>Direct Beneficiaries</p>
+                            </div>
+                            <div class="col-md-3">
+                                <h4>70%</h4>
+                                <p>Operational Cost Reduction</p>
+                            </div>
+                            <div class="col-md-3">
+                                <h4>2.5 tons</h4>
+                                <p>CO₂ Reduction/Household/Year</p>
+                            </div>
+                            <div class="col-md-3">
+                                <h4>12,500</h4>
+                                <p>Households with Improved Cookstoves</p>
+                            </div>
+                        </div>
+                        <p class="mt-3"><em>Evidence-based energy solutions that strengthen humanitarian programming while building community resilience and environmental sustainability in Mali's Tominian and San districts.</em></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map Section -->
+        <h2 class="section-title">Project Locations - Energy Interventions</h2>
+        <div class="card">
+            <div class="card-body">
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Map - Centered on Mali project area
+        const map = L.map('map').setView([13.25, -4.5], 9);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Add markers for energy interventions - Actual project locations
+        const energyLocations = [
+            {lat: 13.83945, lng: -6.06792, name: "Segou Region", type: "Regional Coordination Hub", beneficiaries: "Administrative Support"},
+            {lat: 13.21809, lng: -4.37665, name: "San", type: "Solar Water Pumps + Cookstoves", beneficiaries: "25,000"},
+            {lat: 13.28573, lng: -4.59082, name: "Tominian", type: "Solar Water Pumps + Cookstoves", beneficiaries: "25,000"},
+            {lat: 13.22724, lng: -4.47998, name: "Tominian District", type: "Technical Training Center", beneficiaries: "500 technicians"}
+        ];
+
+        energyLocations.forEach(location => {
+            const marker = L.marker([location.lat, location.lng]).addTo(map);
+            marker.bindPopup(`
+                <strong>${location.name}</strong><br>
+                <em>${location.type}</em><br>
+                Beneficiaries: ${location.beneficiaries}
+            `);
+        });
+
+        // Add legend
+        const legend = L.control({position: 'bottomright'});
+        legend.onAdd = function (map) {
+            const div = L.DomUtil.create('div', 'info legend');
+            div.innerHTML = `
+                <h6>Energy Interventions</h6>
+                <i style="background: #f39c12; width: 12px; height: 12px; display: inline-block; margin-right: 5px;"></i> Solar Water Pumps<br>
+                <i style="background: #e67e22; width: 12px; height: 12px; display: inline-block; margin-right: 5px;"></i> Improved Cookstoves<br>
+                <i style="background: #27ae60; width: 12px; height: 12px; display: inline-block; margin-right: 5px;"></i> Training Centers
+            `;
+            div.style.background = 'white';
+            div.style.padding = '10px';
+            div.style.borderRadius = '5px';
+            return div;
+        };
+        legend.addTo(map);
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
